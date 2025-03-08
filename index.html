@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牛头崖大集导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-yellow: #FFD700;
+            --accent-red: #FF4444;
+            --text-dark: #2B2B2B;
+            --background: #FFF9E6;
+        }
+
+        body {
+            font-family: '微软雅黑', sans-serif;
+            background: var(--background);
+            margin: 0;
+            padding-top: 80px;
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .market-logo {
+            height: 60px;
+            width: auto;
+            border-radius: 8px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--primary-yellow);
+            border-radius: 25px;
+        }
+
+        .store-listing {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .store-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .store-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .store-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-showcase {
+            display: none;
+            padding: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .product-showcase.active {
+            display: grid;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .map-container {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s;
+            padding: 0 20px;
+        }
+
+        .map-container.expanded {
+            height: 50vh;
+        }
+
+        .static-map {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .cart-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-red);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .product-showcase { grid-template-columns: 1fr; }
+            .store-header { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-float" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count">0</span>
+    </div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <img src="images/logo.png" alt="牛头崖大集" class="market-logo">
+            <div class="search-box">
+                <input type="text" placeholder="搜索商家/商品..." class="search-input">
+                <button class="search-btn">搜索</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="store-listing">
+        <!-- 海鲜区 -->
+        <div class="store-card" onclick="toggleProducts('seafood')">
+            <div class="store-header">
+                <img src="images/store1.jpg" alt="海鲜" class="store-thumbnail">
+                <div class="store-info">
+                    <h2>老船头海鲜</h2>
+                    <div class="store-meta">
+                        <span>★4.8</span>
+                        <span>A区12号</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-showcase" id="seafood">
+                <div class="product-item">
+                    <img src="images/product1.jpg" alt="皮皮虾" class="product-img">
+                    <div class="product-info">
+                        <h3>渤海湾皮皮虾</h3>
+                        <p>￥35/斤</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product2.jpg" alt="扇贝" class="product-img">
+                    <div class="product-info">
+                        <h3>鲜活扇贝</h3>
+                        <p>￥18/斤</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product3.jpg" alt="海参" class="product-img">
+                    <div class="product-info">
+                        <h3>野生刺参</h3>
+                        <p>￥128/斤</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 手工艺品区 -->
+        <div class="store-card" onclick="toggleProducts('crafts')">
+            <div class="store-header">
+                <img src="images/store2.jpg" alt="手工艺" class="store-thumbnail">
+                <div class="store-info">
+                    <h2>巧手坊</h2>
+                    <div class="store-meta">
+                        <span>★4.7</span>
+                        <span>B区08号</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-showcase" id="crafts">
+                <div class="product-item">
+                    <img src="images/product4.jpg" alt="剪纸" class="product-img">
+                    <div class="product-info">
+                        <h3>传统剪纸</h3>
+                        <p>￥25/套</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product5.jpg" alt="布艺" class="product-img">
+                    <div class="product-info">
+                        <h3>手工布老虎</h3>
+                        <p>￥88/个</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product6.jpg" alt="编织" class="product-img">
+                    <div class="product-info">
+                        <h3>秸秆编织</h3>
+                        <p>￥35起</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 粮油区 -->
+        <div class="store-card" onclick="toggleProducts('grocery')">
+            <div class="store-header">
+                <img src="images/store3.jpg" alt="粮油" class="store-thumbnail">
+                <div class="store-info">
+                    <h2>王家粮油</h2>
+                    <div class="store-meta">
+                        <span>★4.9</span>
+                        <span>C区15号</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-showcase" id="grocery">
+                <div class="product-item">
+                    <img src="images/product7.jpg" alt="大米" class="product-img">
+                    <div class="product-info">
+                        <h3>五常大米</h3>
+                        <p>￥89/袋</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product8.jpg" alt="花生油" class="product-img">
+                    <div class="product-info">
+                        <h3>现榨花生油</h3>
+                        <p>￥128/桶</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product9.jpg" alt="小米" class="product-img">
+                    <div class="product-info">
+                        <h3>沁州黄小米</h3>
+                        <p>￥15/斤</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 花卉区 -->
+        <div class="store-card" onclick="toggleProducts('flowers')">
+            <div class="store-header">
+                <img src="images/store4.jpg" alt="花卉" class="store-thumbnail">
+                <div class="store-info">
+                    <h2>新春花卉园</h2>
+                    <div class="store-meta">
+                        <span>★4.6</span>
+                        <span>D区22号</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-showcase" id="flowers">
+                <div class="product-item">
+                    <img src="images/product10.jpg" alt="蝴蝶兰" class="product-img">
+                    <div class="product-info">
+                        <h3>精品蝴蝶兰</h3>
+                        <p>￥88/盆</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product11.jpg" alt="银柳" class="product-img">
+                    <div class="product-info">
+                        <h3>染色银柳</h3>
+                        <p>￥35/束</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product12.jpg" alt="多肉" class="product-img">
+                    <div class="product-info">
+                        <h3>多肉组合</h3>
+                        <p>￥25/组</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 春联区 -->
+        <div class="store-card" onclick="toggleProducts('spring')">
+            <div class="store-header">
+                <img src="images/store5.jpg" alt="春联" class="store-thumbnail">
+                <div class="store-info">
+                    <h2>福满堂春联</h2>
+                    <div class="store-meta">
+                        <span>★4.8</span>
+                        <span>E区05号</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-showcase" id="spring">
+                <div class="product-item">
+                    <img src="images/product13.jpg" alt="春联" class="product-img">
+                    <div class="product-info">
+                        <h3>手写春联</h3>
+                        <p>￥15/副</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product14.jpg" alt="福字" class="product-img">
+                    <div class="product-info">
+                        <h3>烫金福字</h3>
+                        <p>￥8/张</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/product15.jpg" alt="窗花" class="product-img">
+                    <div class="product-info">
+                        <h3>剪纸窗花</h3>
+                        <p>￥5/对</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="map-section">
+        <button class="map-toggle" onclick="toggleMap()">展开地图</button>
+        <div class="map-container" id="mapContainer">
+            <img src="images/map.jpg" alt="集市地图" class="static-map">
+        </div>
+    </div>
+
+    <script>
+        let cartCount = 0;
+
+        function toggleProducts(id) {
+            const showcase = document.getElementById(id);
+            showcase.style.display = showcase.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        function toggleMap() {
+            const map = document.getElementById('mapContainer');
+            map.style.height = map.style.height === '0px' ? '50vh' : '0';
+        }
+
+        function showCart() {
+            alert(`当前购物车有 ${cartCount} 件商品`);
+        }
+
+        document.querySelectorAll('.product-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                cartCount++;
+                document.querySelector('.cart-count').textContent = cartCount;
+            });
+        });
+    </script>
+</body>
+</html>
